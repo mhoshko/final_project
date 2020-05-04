@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Reviews</title>
+    {% include "shared_links.html" %}
+  </head>
+  <body>
+    {% include "navbar.html" %}
+    <h1>Reviews</h1>
+    {% if not reviews %}
+    <p>There are no reviews in your list.</p>
+    {% else %}
+    <div class="container">
+    <div class = "col-small">
+      <div class = "custom-control" "custom_checkbox">
+        <form method="POST">
+          {% csrf_token %}
+          {{ is_hidden.as_p }}
+        </form>
+      </div>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Review</th>
+        <th>Stars</th>
+        <th>Recommendation</th>
+        <th>Readability</th>
+        <th>Action</th>
+      </tr>
+      {% for review in reviews %}
+        <tr>
+          <td>{{ review.book.title }}</td>
+          <td>{{ review.book.author }}</td>
+          <td>{{ review.description }}</td>
+          <td>{{ review.stars }}</td>
+          <td>{{ review.recommendation }}</td>
+          <td>{{ review.readability }}</td>
+          <td>
+            <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{review.id}})">Delete Review</a>
+          </td>
+        </tr>
+      {% endfor %}
+      {% endif %}
+    </table>
+    <br>
+    <a href = "{% url 'add_review' %}" class="btn mb-2 btn-outline-info">Add Review</a>
+  </div>
+</div>
+    <!-- Modal -->
+    <div id="deleteModal" class="modal fade" role='dialog'>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Delete Review</h4>
+          </div>
+          <div class="modal-body">
+            <p>Do you really want to delete this book?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <span id= 'deleteButton'></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

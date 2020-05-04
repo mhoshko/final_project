@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Login Page</title>
+    {% include "shared_links.html" %}
+  </head>
+  <body>
+    {% include "navbar.html" %}
+    <h1>Login</h1>
+    <div class="container">
+
+        <form method="post">
+          {% csrf_token %}
+
+          {{ form.as_p }}
+
+      <div class="col-sm-4">
+            <input type="submit" class="btn mb-2 btn-outline-info" value = "login"/>
+      </div>
+      </form>
+        <p>If you don't already have a username and password, join <a href="{% url 'join' %}">here</a></p>
+
+      </div>
+  </body>
+</html>

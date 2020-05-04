@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Books</title>
+    {% include "shared_links.html" %}
+  </head>
+  <body>
+    {% include "navbar.html" %}
+    <h1>Books</h1>
+    {% if not books %}
+    <p>There are no books in your list.</p>
+    {% else %}
+    <div class="container">
+    <div class = "col-small">
+      <div class = "custom-control" "custom_checkbox">
+        <form action="/tasks/" method="POST">
+          {% csrf_token %}
+          {{ is_hidden.as_p }}
+        </form>
+      </div>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Length</th>
+        <th>Completed</th>
+        <th>Action</th>
+      </tr>
+      {% for book in books %}
+        <tr>
+          <td>{{ book.title }}</td>
+          <td>{{ book.author }}</td>
+          <td>{{ book.genre }}</td>
+          <td>{{ book.length }}</td>
+          <td><a href="?toggle_completed={{task.id}}">
+            {% if book.completed %}Yes{% else %}No{% endif %}
+          </a></td>
+          <td>
+            <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.id}})">Delete Book From Reading List</a>
+          </td>
+        </tr>
+      {% endfor %}
+      {% endif %}
+    </table>
+    <br>
+    <a href = "{% url 'add_book' %}" class="btn mb-2 btn-outline-info">Add Book</a>
+  </div>
+</div>
+    <!-- Modal -->
+    <div id="deleteModal" class="modal fade" role='dialog'>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Delete Book</h4>
+          </div>
+          <div class="modal-body">
+            <p>Do you really want to delete this book?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <span id= 'deleteButton'></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

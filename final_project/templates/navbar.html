@@ -1,0 +1,34 @@
+<nav class="navbar navbar-light navbar-expand-lg" style="background-color: #e3f2fd;">
+<a class="navbar-brand text-info" href="{% url 'home' %}">Organizer</a>
+<ul class="navbar-nav mr-auto mt-auto">
+  <li class="nav-item active">
+    <a class="nav-item nav-link text-info"  href="{% url 'books' %}">Books</a>
+  </li>
+
+  <li class="nav-item active">
+    <a class="nav-item nav-link text-info"  href="{% url 'reviews' %}">Reviews</a>
+  </li>
+  <li class="nav-item active">
+    <a class="nav-item nav-link text-info"  href="{% url 'profile' %}">Profile</a>
+  </li>
+
+  <li class="nav-item active">
+    <a class="nav-item nav-link text-info" href="/api/v1/" target="_blank">REST API</a>
+  </li>
+  </ul>
+
+  <ul class="navbar-nav">
+  {% if is_user %}
+    <li class="nav-item active">
+    <a class="btn btn-info" href="{% url 'user_logout' %}" role="button">Logout</a>
+    </li>
+  {% else %}
+    <li class="nav-item active">
+    <a class="nav-item nav-link text-info" href="{% url 'join' %}">Sign Up</a>
+    </li>
+    <li class="nav-item active">
+    <a class="btn btn-info" href="{% url 'user_login' %}" role="button">Login</a>
+    </li>
+    {% endif %}
+</ul>
+</nav>
