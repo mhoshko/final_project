@@ -4,9 +4,77 @@
     <meta charset="utf-8">
     <title>Main Page</title>
     {% include "shared_links.html" %}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
   </head>
   <body>
     {% include "navbar.html" %}
     <h1>Main Page</h1>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="container-fluid">
+          <div class="jumbotron">
+            <div align="center">
+              <h2>Your Book List</h2>
+              <div class="ct-chart ct-perfect-fourth" id="chart1"></div>
+              <form action="\books\">
+                <input type="submit" class = "btn mb-2 btn-outline-info" value="Your Book List"/>
+              </form>
+
+              <script>
+              new Chartist.Pie('#chart1',
+              { labels: ['Completed', 'Pending'], series: [{{books_completed}}, {{books_pending}}] },
+              { labelInterpolationFnc: function(value) { return value[0] } },
+              [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
+              labelInterpolationFnc: function(value) { return value;}}]]);
+                </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="container-fluid">
+          <div class="jumbotron">
+            <div align="center">
+              <h2>Budget</h2>
+                <div class="ct-chart ct-perfect-fourth" id="chart2"></div>
+                <form action="\books\">
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Books"/>
+                </form>
+                <script>
+                new Chartist.Pie('#chart2',
+                { labels: ['Recommended', 'Not Recommended'], series: [{{recommended}}, {{not_recommended}}] },
+                { labelInterpolationFnc: function(value) { return value[0] } },
+                [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
+                labelInterpolationFnc: function(value) { return value;}}]]);
+
+                </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="container-fluid">
+          <div class="jumbotron">
+            <div align="center">
+              <h2>Journal</h2>
+              <script>
+              new Chartist.Bar('#chart3',
+              {  series:[{{genres}}]},
+              { seriesBarDistance: 10},
+              [['screen', { seriesBarDistance: 5,
+              axisX: { labelInterpolationFnc: function(value){ return value[0];}}}]]);
+
+              </script>
+                <!-- <h4>Number of Journals: {{journal_count}}</h4> -->
+                <!-- <h5>Days since last Journal entry: {{days_passed}}</h5> -->
+                <form action="\books\">
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Books"/>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

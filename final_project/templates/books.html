@@ -14,7 +14,7 @@
     <div class="container">
     <div class = "col-small">
       <div class = "custom-control" "custom_checkbox">
-        <form action="/tasks/" method="POST">
+        <form action="/books/" method="POST">
           {% csrf_token %}
           {{ is_hidden.as_p }}
         </form>
@@ -34,7 +34,7 @@
           <td>{{ book.author }}</td>
           <td>{{ book.genre }}</td>
           <td>{{ book.length }}</td>
-          <td><a href="?toggle_completed={{task.id}}">
+          <td><a href="?toggle_completed={{book.id}}">
             {% if book.completed %}Yes{% else %}No{% endif %}
           </a></td>
           <td>

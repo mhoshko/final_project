@@ -7,3 +7,5 @@ function closeDeleteModal(id) {
   $('#deleteModal').modal('hide');
   return true
 }
+
+let getImage = document.getElementsByClassName('profileImage');

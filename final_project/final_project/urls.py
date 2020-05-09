@@ -35,7 +35,9 @@ urlpatterns = [
     path('books/', views.books, name='books'),
     path('add_book/', views.add_book, name='add_book'),
     path('add_review/', views.add_review, name='add_review'),
-    path('profile/', views.profile, name='profile'),
+    # path('profile/', views.profile, name='profile'),
+    path('createProfile/', views.createProfile, name='createProfile'),
+    path('profile/<username>/', views.profile, name='profile'),
     path('api/v1/', include(router.urls)),
     path('api-auth/v1/', include('rest_framework.urls', namespace='rest_framework'))
 ]

@@ -25,20 +25,20 @@
         <th>Author</th>
         <th>Review</th>
         <th>Stars</th>
-        <th>Recommendation</th>
+        <th>Recommended</th>
         <th>Readability</th>
         <th>Action</th>
       </tr>
-      {% for review in reviews %}
+      {% for book in books %}
         <tr>
-          <td>{{ review.book.title }}</td>
-          <td>{{ review.book.author }}</td>
-          <td>{{ review.description }}</td>
-          <td>{{ review.stars }}</td>
-          <td>{{ review.recommendation }}</td>
-          <td>{{ review.readability }}</td>
+          <td>{{ book.title }}</td>
+          <td>{{ book.author }}</td>
+          <td>{{ book.reviews.description }}</td>
+          <td>{{ book.reviews.stars }}</td>
+          <td>{{ book.reviews.recommendation }}</td>
+          <td>{{ book.reviews.readability }}</td>
           <td>
-            <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{review.id}})">Delete Review</a>
+            <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.review.id}})">Delete Review</a>
           </td>
         </tr>
       {% endfor %}

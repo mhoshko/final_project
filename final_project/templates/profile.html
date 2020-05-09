@@ -8,5 +8,44 @@
   <body>
     {% include "navbar.html" %}
     <h1>Profile Page</h1>
+    <div class="container-fluid profileCard first-element">
+      <div class="row">
+        {% if is_user %}
+        {% if is_an_account %}
+        <div class="card col-4">
+          <div class="profileImage"></div>
+          <img src="{{ user_info.UserProfile.picture.url }}" style="width:100%">
+          <h1>{{user_info.first_name}} {{ user_info.last_name}}</h1>
+          <h3>{{ user_info.username }}</h3>
+          <p class="title">{{ user_info.email }}</p>
+          <p class="title">{{ user_info.profile.bio }}</p>
+          <p><a href="{{ user_info.email }}" class="profileCardContact">Contact</a></p>
+        </div>
+
+    <br>
+      <div class="col-5">
+        <br>
+        {% if not is_personal_profile %}
+          <h3>View Their Book List:</h3>
+          <a href="/profile/{{ user.username }}" class="btn mb-2 btn-outline-info">Book List</a>
+        {% elif is_personal_profile %} <!-- end of not personal profile, beginning of if true-->
+        {% if has_agency %}
+          <h3>View Your Book List:</h3>
+          <a href="/profile/{{ user.username }}" class="btn mb-2 btn-outline-info">Book List</a>
+        {% endif %} <!-- end of if is_personal_profile -->
+
+        {% elif not is_an_account %}  <!-- end of if account, beginning of not account  -->
+          <a href="{% url '' %}" class="btn mb-2 btn-outline-info">This user does not exist. Return to the home page.</a>
+        {% endif %}  <!-- end of if not account -->
+
+
+        {% elif not is_user %}  <!-- end of if user, beginning of not user  -->
+          <a href="{% url 'login' %}" class="btn mb-2 btn-outline-info">Log In Here to be able to View This User</a>
+        {% endif %}  <!-- end of if not user  -->
+        {% endif %}
+      </div>
+    </div>
+    </div>
+
   </body>
 </html>

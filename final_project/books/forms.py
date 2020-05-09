@@ -12,14 +12,14 @@ class ReviewForm(ModelForm):
     description = forms.CharField(widget=forms.TextInput(attrs={'size': '1000'}))
     class Meta:
         model = Review
-        exclude = ['user', 'book']
+        exclude = ['user']
 
 class BookForm(ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size': '100'}))
     author = forms.CharField(widget=forms.TextInput(attrs={'size': '50'}))
     class Meta:
         model = Book
-        exclude = ['review', 'user']
+        exclude = ['reviews', 'user']
 
 class AddBookForm(ModelForm):
     title = forms.ModelChoiceField(queryset=Book.objects.all().order_by('title'))
