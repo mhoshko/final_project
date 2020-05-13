@@ -6,7 +6,7 @@ from books.models import Review, Book, UserProfile, BookGenre
 class ProfileForm(ModelForm):
     class Meta:
         model = UserProfile
-        exclude = ['user']
+        exclude = ['user', 'books_view_hide_completed', 'reviews_view_hide_others']
 
 class ReviewForm(ModelForm):
     description = forms.CharField(widget=forms.TextInput(attrs={'size': '1000'}))

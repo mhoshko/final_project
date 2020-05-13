@@ -25,7 +25,7 @@ def home(request):
     recommended = Review.objects.filter(UserProfile=profile, recommendation=True).count()
     not_recommended = Review.objects.filter(UserProfile=profile, recommendation=False).count()
     genres = list(Book.objects.filter(UserProfile=profile).values_list('genre', flat=True))
-    #genres = list()
+
     print(genres)
     context = {
         "books_completed": books_completed,
@@ -78,6 +78,7 @@ def reviews(request):
         "is_user": checkAuth(request),
         "reviews": my_reviews,
         'is_hidden': is_hidden,
+        "profile": profile, 
         "books": my_books,
     }
     return render(request, 'reviews.html', context=context)
@@ -92,9 +93,6 @@ def add_review(request):
         form_1 = BookForm(request.POST)
         form_instance = ReviewForm(request.POST)
         if(form_instance.is_valid() and form_1.is_valid()):
-
-
-            #user = User.objects.get(id=request.user.id)
             title = form_1.cleaned_data["title"]
             genre = form_1.cleaned_data["genre"]
             author = form_1.cleaned_data["author"]
@@ -102,22 +100,12 @@ def add_review(request):
             completed = form_1.cleaned_data["completed"]
             bk = Book.objects.create(title=title, genre=genre, author=author, length=length, completed=completed)
             bk.UserProfile.add(profile)
-            #profile.book.add(bk)
 
             description = form_instance.cleaned_data["description"]
             stars = form_instance.cleaned_data["stars"]
             recommendation = form_instance.cleaned_data["recommendation"]
             readability = form_instance.cleaned_data["readability"]
-
-            #book = form_1
             rev = Review.objects.create(UserProfile=profile, description=description, stars=stars, recommendation=recommendation, readability=readability, book=bk)
-
-            #Review.book.set(form_1)
-            #Review.objects.filter(user=request.user, description=description).book.add(form_1)
-            #rev.book.add(bk.id)
-            # form_1.save(user=request.user)
-            # form_instance.book = form_1
-            # form_instance.save(user=request.user)
 
             return HttpResponseRedirect('../reviews')
     else:
@@ -191,17 +179,11 @@ def add_book(request):
     my_books = Book.objects.exclude(UserProfile=profile)
     if request.method == 'POST':
         form_instance = AddBookForm(request.POST)
-        #form_instance.fields["title"].queryset = Book.objects.exclude(UserProfile=UserProfile)
         if(form_instance.is_valid()):
-            #user = User.objects.get(id=request.user.id)
             instance = form_instance.save(commit=False)
-
             book = Book.objects.get(title=instance.title)
-
             book.UserProfile.add(profile)
-            #book.update()
-            #book.user.add(user)
-            #book.save()
+
             context = {
                     'books': my_books,
                     "form": form_instance,
@@ -210,7 +192,6 @@ def add_book(request):
             return HttpResponseRedirect('../books')
     else:
       form_instance = AddBookForm()
-      #form_instance.fields["title"].queryset = Book.objects.exclude(UserProfile=UserProfile)
     context = {
             'books': my_books,
             "form": form_instance,
@@ -243,19 +224,36 @@ def createProfile(request):
 @login_required(login_url='/login/')
 def profile(request, username=None):
     use_info = User.objects.get(username=username)
-    person = UserProfile.objects.get(user=request.user)
-    print(person.picture)
+    person = UserProfile.objects.get(user=use_info)
+    profile = UserProfile.objects.get(user=request.user)
+
+    val = request.GET.get('toggle_completed', 0)
+    print(val)
+    if val != 0:
+        book = Book.objects.get(id=val)
+        book.completed = not book.completed
+        book.save()
+
     try:
         user_info = User.objects.get(username=username)
         if user_info == request.user:
             is_personal_profile = True
+            books = Book.objects.filter(UserProfile=profile)
+            reviews = Review.objects.filter(UserProfile=profile)
         else:
             is_personal_profile = False
+            books = Book.objects.filter(UserProfile=person)
+            reviews = Review.objects.filter(UserProfile=person)
         is_an_account = True
+
+
         context = {
             "is_user": checkAuth(request),
             "user": request.user,
             "username": username,
+            #"UserProfile": profile,
+            "books": books,
+            "reviews": reviews,
             "is_an_account": is_an_account,
             "user_info": user_info,
             "is_personal_profile": is_personal_profile,

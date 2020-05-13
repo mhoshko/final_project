@@ -39,7 +39,9 @@
           <td>{{ review.recommendation }}</td>
           <td>{{ review.readability }}</td>
           <td>
+            {% if review.UserProfile == profile %}
             <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.review.id}})">Delete Review</a>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
