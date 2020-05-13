@@ -16,6 +16,9 @@
           <div class="jumbotron">
             <div align="center">
               <h2>Your Book List</h2>
+              {% if not books_completed and not books_pending %}
+              <h4>Your Book List is Empty</h4>
+              {% else %}
               <div class="ct-chart ct-perfect-fourth" id="chart1"></div>
               <form action="\books\">
                 <input type="submit" class = "btn mb-2 btn-outline-info" value="Your Book List"/>
@@ -28,6 +31,12 @@
               [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
               labelInterpolationFnc: function(value) { return value;}}]]);
                 </script>
+              {% endif %}
+              {% if not books_completed and not books_pending %}
+              <form action="\books\">
+                <input type="submit" class = "btn mb-2 btn-outline-info" value="Your Book List"/>
+              </form>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -36,10 +45,13 @@
         <div class="container-fluid">
           <div class="jumbotron">
             <div align="center">
-              <h2>Budget</h2>
+              <h2>Reviews</h2>
+              {% if not recommended and not not_recommended %}
+              <h4>Your Review List is Empty</h4>
+              {% else %}
                 <div class="ct-chart ct-perfect-fourth" id="chart2"></div>
-                <form action="\books\">
-                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Books"/>
+                <form action="\reviews\">
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Reviews"/>
                 </form>
                 <script>
                 new Chartist.Pie('#chart2',
@@ -47,8 +59,14 @@
                 { labelInterpolationFnc: function(value) { return value[0] } },
                 [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
                 labelInterpolationFnc: function(value) { return value;}}]]);
-
                 </script>
+
+                {% endif %}
+                {% if not recommended and not not_recommended %}
+                <form action="\reviews\">
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Reviews"/>
+                </form>
+                {% endif %}
             </div>
           </div>
         </div>
@@ -57,7 +75,7 @@
         <div class="container-fluid">
           <div class="jumbotron">
             <div align="center">
-              <h2>Journal</h2>
+              <h2>Genres</h2>
               <script>
               new Chartist.Bar('#chart3',
               {  series:[{{genres}}]},

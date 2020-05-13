@@ -11,6 +11,7 @@
     {% if not reviews %}
     <p>There are no reviews in your list.</p>
     {% else %}
+
     <div class="container">
     <div class = "col-small">
       <div class = "custom-control" "custom_checkbox">
@@ -29,14 +30,14 @@
         <th>Readability</th>
         <th>Action</th>
       </tr>
-      {% for book in books %}
+      {% for review in reviews %}
         <tr>
-          <td>{{ book.title }}</td>
-          <td>{{ book.author }}</td>
-          <td>{{ book.reviews.description }}</td>
-          <td>{{ book.reviews.stars }}</td>
-          <td>{{ book.reviews.recommendation }}</td>
-          <td>{{ book.reviews.readability }}</td>
+          <td>{{ review.book.title }}</td>
+          <td>{{ review.book.author }}</td>
+          <td>{{ review.description }}</td>
+          <td>{{ review.stars }}</td>
+          <td>{{ review.recommendation }}</td>
+          <td>{{ review.readability }}</td>
           <td>
             <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.review.id}})">Delete Review</a>
           </td>

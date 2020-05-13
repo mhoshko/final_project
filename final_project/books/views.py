@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
-from books.forms import LoginForm, JoinForm, BookForm, ReviewForm, HideCompletedBooksForm, ProfileForm, AddBookForm
+from books.forms import LoginForm, JoinForm, BookForm, ReviewForm, HideCompletedBooksForm, ProfileForm, AddBookForm, HideOtherReviewsForm
 from rest_framework import permissions
 from books.models import Book, Review, UserProfile, BookGenre
 from books.serializers import BookSerializer, BookGenreSerializer, UserSerializer, ReviewSerializer
@@ -19,11 +19,12 @@ def checkAuth(request):
 # Create your views here.
 @login_required(login_url='/login/')
 def home(request):
-    books_completed = Book.objects.select_related().filter(user=request.user, completed=True).count()
-    books_pending = Book.objects.select_related().filter(user=request.user, completed=False).count()
-    recommended = Review.objects.select_related().filter(user=request.user, recommendation=True).count()
-    not_recommended = Review.objects.select_related().filter(user=request.user, recommendation=False).count()
-    genres = list(Book.objects.select_related().filter(user=request.user).values_list('genre', flat=True))
+    profile = UserProfile.objects.get(user=request.user)
+    books_completed = Book.objects.filter(UserProfile=profile, completed=True).count()
+    books_pending = Book.objects.filter(UserProfile=profile, completed=False).count()
+    recommended = Review.objects.filter(UserProfile=profile, recommendation=True).count()
+    not_recommended = Review.objects.filter(UserProfile=profile, recommendation=False).count()
+    genres = list(Book.objects.filter(UserProfile=profile).values_list('genre', flat=True))
     #genres = list()
     print(genres)
     context = {
@@ -48,11 +49,35 @@ def reviews(request):
         BookGenre.objects.create(genre="Children's Fiction")
         BookGenre.objects.create(genre="Inspirational, Self-Help, and Religious")
         BookGenre.objects.create(genre="Biography, Autobiography, and Memoir")
-    my_reviews = Review.objects.all()
+
+    if request.method == "POST":
+        profile = UserProfile.objects.get(user=request.user)
+        completed_form = HideOtherReviewsForm(request.POST, instance=profile)
+        if(completed_form.is_valid()):
+            completed_form.save()
+
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        is_hidden = HideOtherReviewsForm(instance=profile)
+    except:
+        is_hidden = HideOtherReviewsForm()
+    hidden_checked = is_hidden['reviews_view_hide_others'].value()
+    if hidden_checked:
+        profile = UserProfile.objects.get(user=request.user)
+        my_reviews = Review.objects.filter(UserProfile=profile)
+    else:
+        profile = UserProfile.objects.get(user=request.user)
+        try:
+            my_reviews = Review.objects.all()
+        except:
+            my_reviews = None
+
+    #my_reviews = Review.objects.all()
     my_books = Book.objects.all()
     context = {
         "is_user": checkAuth(request),
         "reviews": my_reviews,
+        'is_hidden': is_hidden,
         "books": my_books,
     }
     return render(request, 'reviews.html', context=context)
@@ -62,18 +87,12 @@ def reviews(request):
 def add_review(request):
 
     profile = UserProfile.objects.get(user=request.user)
-    my_books = Book.objects.exclude(user=request.user)
+    my_books = Book.objects.exclude(UserProfile=profile)
     if request.method == 'POST':
         form_1 = BookForm(request.POST)
         form_instance = ReviewForm(request.POST)
         if(form_instance.is_valid() and form_1.is_valid()):
-            description = form_instance.cleaned_data["description"]
-            stars = form_instance.cleaned_data["stars"]
-            recommendation = form_instance.cleaned_data["recommendation"]
-            readability = form_instance.cleaned_data["readability"]
 
-            #book = form_1
-            rev = Review.objects.create(user=request.user, description=description, stars=stars, recommendation=recommendation, readability=readability)
 
             #user = User.objects.get(id=request.user.id)
             title = form_1.cleaned_data["title"]
@@ -81,7 +100,17 @@ def add_review(request):
             author = form_1.cleaned_data["author"]
             length = form_1.cleaned_data["length"]
             completed = form_1.cleaned_data["completed"]
-            bk = Book.objects.create(user=request.user, title=title, genre=genre, author=author, length=length, completed=completed, reviews=rev)
+            bk = Book.objects.create(title=title, genre=genre, author=author, length=length, completed=completed)
+            bk.UserProfile.add(profile)
+            #profile.book.add(bk)
+
+            description = form_instance.cleaned_data["description"]
+            stars = form_instance.cleaned_data["stars"]
+            recommendation = form_instance.cleaned_data["recommendation"]
+            readability = form_instance.cleaned_data["readability"]
+
+            #book = form_1
+            rev = Review.objects.create(UserProfile=profile, description=description, stars=stars, recommendation=recommendation, readability=readability, book=bk)
 
             #Review.book.set(form_1)
             #Review.objects.filter(user=request.user, description=description).book.add(form_1)
@@ -140,11 +169,11 @@ def books(request):
     hidden_checked = is_hidden['books_view_hide_completed'].value()
     if hidden_checked:
         profile = UserProfile.objects.get(user=request.user)
-        my_books = Book.objects.select_related().filter(user=request.user, completed=False)
+        my_books = Book.objects.filter(UserProfile=profile, completed=False)
     else:
         profile = UserProfile.objects.get(user=request.user)
         try:
-            my_books = Book.objects.select_related().filter(user=request.user)
+            my_books = Book.objects.filter(UserProfile=profile)
         except:
             my_books = None
     context = {
@@ -159,15 +188,20 @@ def books(request):
 def add_book(request):
 
     profile = UserProfile.objects.get(user=request.user)
-    my_books = Book.objects.exclude(user=request.user)
+    my_books = Book.objects.exclude(UserProfile=profile)
     if request.method == 'POST':
         form_instance = AddBookForm(request.POST)
+        #form_instance.fields["title"].queryset = Book.objects.exclude(UserProfile=UserProfile)
         if(form_instance.is_valid()):
-            user = User.objects.get(id=request.user.id)
+            #user = User.objects.get(id=request.user.id)
             instance = form_instance.save(commit=False)
+
             book = Book.objects.get(title=instance.title)
-            book.user.add(user)
-            book.save()
+
+            book.UserProfile.add(profile)
+            #book.update()
+            #book.user.add(user)
+            #book.save()
             context = {
                     'books': my_books,
                     "form": form_instance,
@@ -176,6 +210,7 @@ def add_book(request):
             return HttpResponseRedirect('../books')
     else:
       form_instance = AddBookForm()
+      #form_instance.fields["title"].queryset = Book.objects.exclude(UserProfile=UserProfile)
     context = {
             'books': my_books,
             "form": form_instance,
@@ -243,7 +278,7 @@ def join(request):
             user.save()
             UserProfile.objects.get_or_create(user=user)
             # Success! Redirect to home page.
-            return redirect("/")
+            return redirect("/login")
         else:
             # Form invalid, print errors to console
             print(join_form.errors)
