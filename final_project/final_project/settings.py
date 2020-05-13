@@ -15,7 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
-STATIC_DIR = os.path.join(BASE_DIR, "final_project/static/books")
+STATIC_DIR = os.path.join(BASE_DIR, "static/books")
 
 
 # Quick-start development settings - unsuitable for production
@@ -126,6 +126,6 @@ STATICFILES_DIRS = [
     STATIC_DIR
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'final_project/static/books')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/books')
 
 MEDIA_URL = '/media/'
