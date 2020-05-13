@@ -1,0 +1,17 @@
+/* Madeline Hoshko */
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+tr{
+  padding-left:10px;
+}
+td {
+  padding-top:10px;
+  padding-left:10px;
+  padding-bottom:5px;
+  padding-right:10px;
+}

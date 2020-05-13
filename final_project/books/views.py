@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
+import re
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
@@ -78,7 +79,7 @@ def reviews(request):
         "is_user": checkAuth(request),
         "reviews": my_reviews,
         'is_hidden': is_hidden,
-        "profile": profile, 
+        "profile": profile,
         "books": my_books,
     }
     return render(request, 'reviews.html', context=context)
@@ -225,6 +226,13 @@ def createProfile(request):
 def profile(request, username=None):
     use_info = User.objects.get(username=username)
     person = UserProfile.objects.get(user=use_info)
+    pic = person.picture.url
+    pic1 = pic
+    print(pic)
+    pic = re.sub(r'^.*?\/', '', pic)
+    print(pic)
+    pic = re.sub(r'^.*?\/', '', pic)
+    print(pic)
     profile = UserProfile.objects.get(user=request.user)
 
     val = request.GET.get('toggle_completed', 0)
@@ -251,6 +259,8 @@ def profile(request, username=None):
             "is_user": checkAuth(request),
             "user": request.user,
             "username": username,
+            "pic": pic,
+            "pic1": pic1,
             #"UserProfile": profile,
             "books": books,
             "reviews": reviews,

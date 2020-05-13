@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Profile</title>
     {% include "shared_links.html" %}
+    {% load static %}
   </head>
   <body>
     {% include "navbar.html" %}
@@ -16,7 +17,7 @@
         {% if is_an_account %}
         <div class="card col-4">
           <div class="profileImage"></div>
-          <img src="{{ user_info.UserProfile.picture.url }}" style="width:100%">
+          <img src="{{ pic1 }}" style="width:100%">
           <h1>{{user_info.first_name}} {{ user_info.last_name}}</h1>
           <h3>{{ user_info.username }}</h3>
           <p class="title">{{ user_info.email }}</p>
@@ -74,11 +75,12 @@
           {% endif %} <!-- if reviews of not personal account -->
 
         {% else %} <!-- if personal account -->
-          <h3>Your Book List:</h3>
+
           {%  if not books %} <!-- end of not personal profile, beginning of if true-->
           <h3>Your Book List is Empty Add to it Here:</h3>
           <a href="/add_book/" class="btn mb-2 btn-outline-info">Add Book</a>
           {% else %} <!-- end of if no books of personal account -->
+            <h3>Your Book List:</h3>
             <table>
               <tr>
                 <th>Title</th>

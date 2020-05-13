@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     books_view_hide_completed = models.BooleanField(default=False)
     reviews_view_hide_others = models.BooleanField(default=False)
     bio = models.TextField(max_length=500, blank=True)
-    picture = models.ImageField(upload_to='media/', default="defaultProfilePic.jpg", null=True, blank=True)
+    picture = models.ImageField(upload_to='', default="defaultProfilePic.jpg", null=True, blank=True)
     #book = models.ManyToManyField(Book)
     def __str__(self):
         return self.user.username

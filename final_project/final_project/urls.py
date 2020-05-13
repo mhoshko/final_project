@@ -14,9 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include
 from books import views
 from rest_framework import routers
+from django.conf.urls.static import static
 
 
 router = routers.DefaultRouter()
@@ -40,4 +42,4 @@ urlpatterns = [
     path('profile/<username>/', views.profile, name='profile'),
     path('api/v1/', include(router.urls)),
     path('api-auth/v1/', include('rest_framework.urls', namespace='rest_framework'))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
