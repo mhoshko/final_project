@@ -267,13 +267,14 @@ def profile(request, username=None):
     use_info = User.objects.get(username=username)
     person = UserProfile.objects.get(user=use_info)
     pic = person.picture.url
-    pic1 = pic
-    print(pic)
-    pic = re.sub(r'^.*?\/', '', pic)
-    print(pic)
-    pic = re.sub(r'^.*?\/', '', pic)
-    print(pic)
     profile = UserProfile.objects.get(user=request.user)
+
+
+    books_completed = Book.objects.filter(UserProfile=person, completed=True).count()
+    books_pending = Book.objects.filter(UserProfile=person, completed=False).count()
+    recommended = Review.objects.filter(UserProfile=person, recommendation=True).count()
+    not_recommended = Review.objects.filter(UserProfile=person, recommendation=False).count()
+    genres = list(Book.objects.filter(UserProfile=person).values_list('genre', flat=True))
 
     val = request.GET.get('toggle_completed', 0)
     print(val)
@@ -300,7 +301,10 @@ def profile(request, username=None):
             "user": request.user,
             "username": username,
             "pic": pic,
-            "pic1": pic1,
+            "books_completed": books_completed,
+            "books_pending": books_pending,
+            "recommended": recommended,
+            "not_recommended": not_recommended,
             #"UserProfile": profile,
             "books": books,
             "reviews": reviews,

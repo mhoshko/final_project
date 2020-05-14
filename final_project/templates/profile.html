@@ -5,6 +5,8 @@
     <title>Profile</title>
     {% include "shared_links.html" %}
     {% load static %}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
   </head>
   <body>
     {% include "navbar.html" %}
@@ -17,7 +19,7 @@
         {% if is_an_account %}
         <div class="card col-4">
           <div class="profileImage"></div>
-          <img src="{{ pic1 }}" style="width:100%">
+          <img src="{{ pic }}" style="width:100%">
           <h1>{{user_info.first_name}} {{ user_info.last_name}}</h1>
           <h3>{{ user_info.username }}</h3>
           <p class="title">{{ user_info.email }}</p>
@@ -149,6 +151,91 @@
         {% endif %}  <!-- end of if not user  -->
       </div>
     </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="container-fluid">
+          <div class="jumbotron">
+            <div align="center">
+              <h2>Book List Progression</h2>
+              {% if not books_completed and not books_pending %}
+              <h4>Book List is Empty</h4>
+              {% else %}
+              <div class="ct-chart ct-perfect-fourth" id="chart1"></div>
+              <form action="\books\">
+                <input type="submit" class = "btn mb-2 btn-outline-info" value="Your Book List"/>
+              </form>
+
+              <script>
+              new Chartist.Pie('#chart1',
+              { labels: ['Completed', 'Pending'], series: [{{books_completed}}, {{books_pending}}] },
+              { labelInterpolationFnc: function(value) { return value[0] } },
+              [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
+              labelInterpolationFnc: function(value) { return value;}}]]);
+                </script>
+              {% endif %}
+              {% if not books_completed and not books_pending %}
+              <form action="\books\">
+                <input type="submit" class = "btn mb-2 btn-outline-info" value="Your Book List"/>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="container-fluid">
+          <div class="jumbotron">
+            <div align="center">
+              <h2>Reviews</h2>
+              {% if not recommended and not not_recommended %}
+              <h4>Your Review List is Empty</h4>
+              {% else %}
+                <div class="ct-chart ct-perfect-fourth" id="chart2"></div>
+                <form action="\reviews\">
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Reviews"/>
+                </form>
+                <script>
+                new Chartist.Pie('#chart2',
+                { labels: ['Recommended', 'Not Recommended'], series: [{{recommended}}, {{not_recommended}}] },
+                { labelInterpolationFnc: function(value) { return value[0] } },
+                [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
+                labelInterpolationFnc: function(value) { return value;}}]]);
+                </script>
+
+                {% endif %}
+                {% if not recommended and not not_recommended %}
+                <form action="\reviews\">
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Reviews"/>
+                </form>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="col-md-4">
+        <div class="container-fluid">
+          <div class="jumbotron">
+            <div align="center">
+              <h2>Genres</h2>
+              <script>
+              new Chartist.Bar('#chart3',
+              {  series:[{{genres}}]},
+              { seriesBarDistance: 10},
+              [['screen', { seriesBarDistance: 5,
+              axisX: { labelInterpolationFnc: function(value){ return value[0];}}}]]);
+
+              </script>
+                <!-- <h4>Number of Journals: {{journal_count}}</h4> -->
+                <!-- <h5>Days since last Journal entry: {{days_passed}}</h5> -->
+                <form action="\books\">
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Books"/>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </body>
