@@ -9,6 +9,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     books_view_hide_completed = models.BooleanField(default=False)
     reviews_view_hide_others = models.BooleanField(default=False)
+    hide_others = models.BooleanField(default=False)
     bio = models.TextField(max_length=500, blank=True)
     picture = models.ImageField(upload_to='', default="defaultProfilePic.jpg", null=True, blank=True)
     #book = models.ManyToManyField(Book)

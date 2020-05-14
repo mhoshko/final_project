@@ -12,6 +12,12 @@
     <h1>Main Page</h1>
     <div class="row">
       <div class="col-md-4">
+        <div class = "custom-control" "custom_checkbox">
+          <form method="POST">
+            {% csrf_token %}
+            {{ is_hidden.as_p }}
+          </form>
+        </div>
         <div class="container-fluid">
           <div class="jumbotron">
             <div align="center">

@@ -45,6 +45,16 @@ class HideOtherReviewsForm(ModelForm):
             'reviews_view_hide_others': 'Show Only Your Reviews'
         }
 
+class HideOthers(ModelForm):
+    hide_others = forms.BooleanField(required=False, label='Show Only Your Stats',widget=forms.CheckboxInput(attrs={'onclick': 'this.form.submit()'}))
+    class Meta:
+        model = UserProfile
+        fields = ['hide_others']
+        lables = {
+            'hide_others': 'Show Only Your Stats'
+        }
+
+
 
 class JoinForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}))

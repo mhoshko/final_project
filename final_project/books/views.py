@@ -5,7 +5,7 @@ import re
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
-from books.forms import LoginForm, JoinForm, BookForm, ReviewForm, HideCompletedBooksForm, ProfileForm, AddBookForm, HideOtherReviewsForm
+from books.forms import LoginForm, JoinForm, BookForm, ReviewForm, HideCompletedBooksForm, ProfileForm, AddBookForm, HideOtherReviewsForm, HideOthers
 from rest_framework import permissions
 from books.models import Book, Review, UserProfile, BookGenre
 from books.serializers import BookSerializer, BookGenreSerializer, UserSerializer, ReviewSerializer
@@ -21,17 +21,41 @@ def checkAuth(request):
 @login_required(login_url='/login/')
 def home(request):
     profile = UserProfile.objects.get(user=request.user)
-    books_completed = Book.objects.filter(UserProfile=profile, completed=True).count()
-    books_pending = Book.objects.filter(UserProfile=profile, completed=False).count()
-    recommended = Review.objects.filter(UserProfile=profile, recommendation=True).count()
-    not_recommended = Review.objects.filter(UserProfile=profile, recommendation=False).count()
-    genres = list(Book.objects.filter(UserProfile=profile).values_list('genre', flat=True))
+
+    if request.method == "POST":
+        profile = UserProfile.objects.get(user=request.user)
+        completed_form = HideOthers(request.POST, instance=profile)
+        if(completed_form.is_valid()):
+            completed_form.save()
+
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        is_hidden = HideOthers(instance=profile)
+    except:
+        is_hidden = HideOthers()
+    hidden_checked = is_hidden['hide_others'].value()
+    if hidden_checked:
+        books_completed = Book.objects.filter(UserProfile=profile, completed=True).count()
+        books_pending = Book.objects.filter(UserProfile=profile, completed=False).count()
+        recommended = Review.objects.filter(UserProfile=profile, recommendation=True).count()
+        not_recommended = Review.objects.filter(UserProfile=profile, recommendation=False).count()
+        genres = list(Book.objects.filter(UserProfile=profile).values_list('genre', flat=True))
+
+    else:
+        books_completed = Book.objects.filter(completed=True).count()
+        books_pending = Book.objects.filter(completed=False).count()
+        recommended = Review.objects.filter(recommendation=True).count()
+        not_recommended = Review.objects.filter(recommendation=False).count()
+        genres = list(Book.objects.values_list('genre', flat=True))
+
 
     print(genres)
     context = {
         "books_completed": books_completed,
         "books_pending": books_pending,
         "recommended": recommended,
+        "is_hidden": is_hidden,
+        "hidden_checked": hidden_checked,
         "not_recommended": not_recommended,
         "user": request.user,
         "genres": genres,
