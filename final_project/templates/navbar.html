@@ -1,5 +1,5 @@
 <nav class="navbar navbar-light navbar-expand-lg" style="background-color: #e3f2fd;">
-<a class="navbar-brand text-info" href="{% url 'home' %}">Organizer</a>
+<a class="navbar-brand text-info" href="{% url 'home' %}">Home</a>
 <ul class="navbar-nav mr-auto mt-auto">
   <li class="nav-item active">
     <a class="nav-item nav-link text-info"  href="{% url 'books' %}">Books</a>
@@ -16,7 +16,7 @@
       <img src="{{ profile.picture.url }}", class="avatar">
     </button>
 
-    <div class="dropdown-menu">
+    <div class="dropdown-menu dropdown-menu-right">
       <div class="dropdown-container">
         Signed in as<br>
         <strong>{{ user.username  }}</strong>

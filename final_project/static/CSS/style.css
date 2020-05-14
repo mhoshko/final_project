@@ -42,6 +42,9 @@ td {
   font-size: 18px;
 }
 
+.dropdown-container {
+  right: 0;
+}
 
 #slogan {
   padding-top: 160px;
