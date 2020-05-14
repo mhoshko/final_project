@@ -9,7 +9,7 @@ class ProfileForm(ModelForm):
         exclude = ['user', 'books_view_hide_completed', 'reviews_view_hide_others']
 
 class ReviewForm(ModelForm):
-    description = forms.CharField(widget=forms.TextInput(attrs={'size': '1000'}))
+    description = forms.CharField(widget=forms.TextInput(attrs={'size': '150'}))
     class Meta:
         model = Review
         exclude = ['UserProfile', 'book']

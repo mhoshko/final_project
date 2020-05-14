@@ -41,5 +41,6 @@ urlpatterns = [
     path('createProfile/', views.createProfile, name='createProfile'),
     path('profile/<username>/', views.profile, name='profile'),
     path('api/v1/', include(router.urls)),
-    path('api-auth/v1/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/v1/', include('rest_framework.urls', namespace='rest_framework')),
+    path('reviews/edit_review/<int:id>/', views.edit_review, name='edit_review')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

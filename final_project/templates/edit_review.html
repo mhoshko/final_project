@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>Edit Review Page</title>
+    {% include "shared_links.html" %}
+  </head>
+  <body>
+    {% include "navbar.html" %}
+    <h1>Edit Review</h1>
+    <div class="container">
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="col-sm-4">
+      <a href="{% url 'reviews' %}" class="btn mb-2 btn-outline-info">Cancel</a>
+      <input type="submit" class="btn mb-2 btn-outline-info" value = "Update Review"/>
+    </div>
+    </form>
+  </div>
+  </body>
+</html>

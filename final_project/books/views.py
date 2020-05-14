@@ -121,6 +121,22 @@ def add_review(request):
     return render(request, 'add_review.html', context=context)
 
 
+@login_required(login_url='/login/')
+def edit_review(request, id):
+    review = Review.objects.get(id=id)
+    if(request.method=='POST'):
+        review_form = ReviewForm(request.POST, instance=review)
+        if review_form.is_valid():
+            review_form.save()
+            return HttpResponseRedirect("../../")
+    else:
+        review_form = ReviewForm(instance=review)
+    context = {
+        "form": review_form,
+        "is_user": checkAuth(request),
+    }
+    return render(request, 'edit_review.html', context=context)
+
 
 
 @login_required(login_url='/login/')
