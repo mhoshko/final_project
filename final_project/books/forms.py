@@ -65,3 +65,6 @@ class JoinForm(ModelForm):
 class LoginForm(Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
+
+class SearchUsersForm(forms.Form):
+    username = forms.CharField(label='Username', max_length=100)

@@ -7,13 +7,12 @@
   </head>
   <body>
     {% include "navbar.html" %}
-    <h1>Reviews</h1>
-
+    {% if not reviews %}
+    <p>There are no reviews for this book.</p>
+    {% else %}
+    <h1>{{ book_title }}'s Reviews</h1>
     <div class="container">
     <div class = "col-small">
-      {% if not reviews %}
-      <p>There are no reviews in your list.</p>
-      {% else %}
       <div class = "custom-control" "custom_checkbox">
         <form method="POST">
           {% csrf_token %}
@@ -28,7 +27,7 @@
         <th>Stars</th>
         <th>Recommended</th>
         <th>Readability</th>
-        <th></th>
+        <th>Available Actions</th>
       </tr>
       {% for review in reviews %}
         <tr>
@@ -39,7 +38,6 @@
           <td>{{ review.recommendation }}</td>
           <td>{{ review.readability }}</td>
           <td>
-            <a href="/books/book{{ review.book.id }}/" class = "btn mb-2 btn-outline-info">View all Reviews For this Book</a>
             {% if review.UserProfile == profile %}
             <a href="/reviews/edit_review/{{ review.id }}/" class="btn mb-2 btn-outline-info">Edit</a>
             <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{review.id}})">Delete Review</a>
@@ -53,23 +51,23 @@
     <a href = "{% url 'add_review' %}" class="btn mb-2 btn-outline-info">Add Review</a>
   </div>
 </div>
-    <!-- Modal -->
-    <div id="deleteModal" class="modal fade" role='dialog'>
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title">Delete Review</h4>
-          </div>
-          <div class="modal-body">
-            <p>Do you really want to delete this book?</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <span id= 'deleteButton'></span>
-          </div>
-        </div>
+<!-- Modal -->
+<div id="deleteModal" class="modal fade" role='dialog'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Delete Review</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you really want to delete this book?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <span id= 'deleteButton'></span>
       </div>
     </div>
-  </body>
+  </div>
+</div>
+</body>
 </html>

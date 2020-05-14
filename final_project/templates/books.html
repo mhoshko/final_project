@@ -8,11 +8,12 @@
   <body>
     {% include "navbar.html" %}
     <h1>Books</h1>
-    {% if not books %}
-    <p>There are no books in your list.</p>
-    {% else %}
+
     <div class="container">
     <div class = "col-small">
+      {% if not books %}
+      <p>There are no books in your list.</p>
+      {% else %}
       <div class = "custom-control" "custom_checkbox">
         <form action="/books/" method="POST">
           {% csrf_token %}
@@ -26,7 +27,7 @@
         <th>Genre</th>
         <th>Length</th>
         <th>Completed</th>
-        <th>Action</th>
+        <th></th>
       </tr>
       {% for book in books %}
         <tr>
@@ -38,6 +39,7 @@
             {% if book.completed %}Yes{% else %}No{% endif %}
           </a></td>
           <td>
+            <a href="/books/book{{ book.id }}/" class = "btn mb-2 btn-outline-info">View all Reviews For this Book</a>
             <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.id}})">Delete Book From Reading List</a>
           </td>
         </tr>

@@ -26,6 +26,7 @@ router.register(r'books', views.BookViewSet)
 router.register(r'users', views.UserViewSet)
 router.register(r'reviews', views.ReviewViewSet)
 router.register(r'book-genre', views.GenreViewSet)
+router.register(r'profiles', views.ProfileViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,8 +40,10 @@ urlpatterns = [
     path('add_review/', views.add_review, name='add_review'),
     # path('profile/', views.profile, name='profile'),
     path('createProfile/', views.createProfile, name='createProfile'),
+    path('search/', views.search_users, name='search_users'),
     path('profile/<username>/', views.profile, name='profile'),
     path('api/v1/', include(router.urls)),
     path('api-auth/v1/', include('rest_framework.urls', namespace='rest_framework')),
-    path('reviews/edit_review/<int:id>/', views.edit_review, name='edit_review')
+    path('reviews/edit_review/<int:id>/', views.edit_review, name='edit_review'),
+    path('books/book<int:id>/', views.single_book, name='single_book')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>Search For Other Users Page</title>
+    {% include "shared_links.html" %}
+  </head>
+  <body>
+    {% include "navbar.html" %}
+    <h1>Search For Other Users by Username</h1>
+    <div class="container">
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="col-sm-4">
+      <input type="submit" class="btn mb-2 btn-outline-info" value = "Search"/>
+    </div>
+    </form>
+  </div>
+  </body>
+</html>

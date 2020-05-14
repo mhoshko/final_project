@@ -8,32 +8,32 @@
   <li class="nav-item active">
     <a class="nav-item nav-link text-info"  href="{% url 'reviews' %}">Reviews</a>
   </li>
-  {% if is_user %}
-  <li class="nav-item active">
-    <a class="nav-item nav-link text-info"  href="/profile/{{ user.username }}">Profile</a>
-  </li>
-  {% endif %}
-  <li class="nav-item active">
-    <a class="nav-item nav-link text-info" href="/api/v1/" target="_blank">REST API</a>
-  </li>
   </ul>
 
-  <ul class="navbar-nav">
   {% if is_user %}
-    <li class="nav-item active">
-    <a class="nav-item nav-link text-info" href="{% url 'createProfile' %}">Update Profile</a>
-    </li>
+  <div class="dropdown">
+    <button class="btn" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      <img src="{{ profile.picture.url }}", class="avatar">
+    </button>
 
-    <li class="nav-item active">
-    <a class="btn btn-info" href="{% url 'user_logout' %}" role="button">Logout</a>
-    </li>
-  {% else %}
-    <li class="nav-item active">
-    <a class="nav-item nav-link text-info" href="{% url 'join' %}">Sign Up</a>
-    </li>
-    <li class="nav-item active">
-    <a class="btn btn-info" href="{% url 'user_login' %}" role="button">Login</a>
-    </li>
-    {% endif %}
-</ul>
+    <div class="dropdown-menu">
+      <div class="dropdown-container">
+        Signed in as<br>
+        <strong>{{ user.username  }}</strong>
+      </div>
+
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="/profile/{{ user.username }}">Profile</a>
+      <a class="dropdown-item" href="{% url 'createProfile' %}">Update Your Profile</a>
+      <a class="dropdown-item" href="{% url 'search_users' %}">Search Other Users</a>
+      <div class="dropdown-divider"></div>
+
+      <div class="dropdown-footer">
+        <a class="nav-item nav-link text-info" href="/api/v1/" target="_blank">REST API</a>
+      </div>
+    </div>
+
+    <a class="btn btn-outline-info" href="/logout/" role="button">Logout</a>
+  {% endif %}
+
 </nav>

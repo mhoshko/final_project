@@ -25,135 +25,20 @@
           <p class="title">{{ user_info.email }}</p>
           <p class="title">{{ user_info.UserProfile.bio }}</p>
         </div>
-
-    <br>
-      <div class="col-5">
-        <br>
-        {% if not is_personal_profile %}
-          <h3>{{ user_info.username }}'s Book List:</h3>
-          {% if books %}
-            <table>
-              <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Genre</th>
-                <th>Length</th>
-                <th>Completed</th>
-              </tr>
-              {% for book in books %}
-                <tr>
-                  <td>{{ book.title }}</td>
-                  <td>{{ book.author }}</td>
-                  <td>{{ book.genre }}</td>
-                  <td>{{ book.length }}</td>
-                  <td>{{ book.completed }}</td>
-                </tr>
-              {% endfor %}
-            </table>
-            {% endif %} <!-- end of if books of not personal profile -->
-          <h3>{{ user_info.username }}'s Reviews:</h3>
-          {% if reviews %}
-            <table>
-              <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Review</th>
-                <th>Stars</th>
-                <th>Recommended</th>
-                <th>Readability</th>
-              </tr>
-              {% for review in reviews %}
-                <tr>
-                  <td>{{ review.book.title }}</td>
-                  <td>{{ review.book.author }}</td>
-                  <td>{{ review.description }}</td>
-                  <td>{{ review.stars }}</td>
-                  <td>{{ review.recommendation }}</td>
-                  <td>{{ review.readability }}</td>
-                </tr>
-              {% endfor %}
-            </table>
-            <br>
-          {% endif %} <!-- if reviews of not personal account -->
-
-        {% else %} <!-- if personal account -->
-
-          {%  if not books %} <!-- end of not personal profile, beginning of if true-->
-          <h3>Your Book List is Empty Add to it Here:</h3>
-          <a href="/add_book/" class="btn mb-2 btn-outline-info">Add Book</a>
-          {% else %} <!-- end of if no books of personal account -->
-            <h3>Your Book List:</h3>
-            <table>
-              <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Genre</th>
-                <th>Length</th>
-                <th>Completed</th>
-                <th>Action</th>
-              </tr>
-              {% for book in books %}
-                <tr>
-                  <td>{{ book.title }}</td>
-                  <td>{{ book.author }}</td>
-                  <td>{{ book.genre }}</td>
-                  <td>{{ book.length }}</td>
-                  <td><a href="?toggle_completed={{book.id}}">
-                    {% if book.completed %}Yes{% else %}No{% endif %}
-                  </a></td>
-                  <td>
-                    <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.id}})">Delete Book From Reading List</a>
-                  </td>
-                </tr>
-              {% endfor %}
-            </table>
-            {% endif %} <!-- end of if books of personal profile -->
-          {% if not reviews %}
-            <h3>You Have No Reviews Add One Here:</h3>
-            <a href="/add_review/" class="btn mb-2 btn-outline-info">Add Review</a>
-          {% else %} <!-- end of if no reviews of personal profile -->
-          <h3>Your Reviews:</h3>
-            {% if reviews %}
-              <table>
-                <tr>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Review</th>
-                  <th>Stars</th>
-                  <th>Recommended</th>
-                  <th>Readability</th>
-                  <th>Action</th>
-                </tr>
-                {% for review in reviews %}
-                  <tr>
-                    <td>{{ review.book.title }}</td>
-                    <td>{{ review.book.author }}</td>
-                    <td>{{ review.description }}</td>
-                    <td>{{ review.stars }}</td>
-                    <td>{{ review.recommendation }}</td>
-                    <td>{{ review.readability }}</td>
-                    <td>
-                      <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.review.id}})">Delete Review</a>
-                    </td>
-                  </tr>
-                {% endfor %}
-              </table>
-            {% endif %} <!-- end of if reviews of personal profile -->
-          {% endif %}
-          {% endif %}
-
-
-        {% elif not is_an_account %}  <!-- end of if account, beginning of not account  -->
-          <a href="{% url '' %}" class="btn mb-2 btn-outline-info">This user does not exist. Return to the home page.</a>
-        {% endif %}  <!-- end of if not account -->
-
-
-        {% endif %}  <!-- end of if not user  -->
       </div>
     </div>
+    <br>
+    <div class="container-fluid profileCard first-element">
+
+    {% if not is_personal_profile %}
+      <h3>{{user_info.first_name}} {{ user_info.last_name}}'s Stats:</h3>
+    {% else %}
+      <h3>Your Stats:</h3>
+      {% endif %}
     </div>
     <div class="row">
-      <div class="col-md-4">
+
+        <div class="col-md-4">
         <div class="container-fluid">
           <div class="jumbotron">
             <div align="center">
@@ -236,6 +121,144 @@
           </div>
         </div>
       </div>
+    </div>
+    <br>
+      <div class="container">
+        <br>
+        {% if not is_personal_profile %}
+          <h3>{{user_info.first_name}} {{ user_info.last_name}}'s Book List:</h3>
+          {% if books %}
+            <table>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Genre</th>
+                <th>Length</th>
+                <th>Completed</th>
+                <th></th>
+              </tr>
+              {% for book in books %}
+                <tr>
+                  <td>{{ book.title }}</td>
+                  <td>{{ book.author }}</td>
+                  <td>{{ book.genre }}</td>
+                  <td>{{ book.length }}</td>
+                  <td>{{ book.completed }}</td>
+                  <td>
+                    <a href="/books/book{{ book.id }}/" class = "btn mb-2 btn-outline-info">View all Reviews For this Book</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+            {% endif %} <!-- end of if books of not personal profile -->
+            <br>
+          <h3>{{user_info.first_name}} {{ user_info.last_name}}'s Reviews:</h3>
+          {% if reviews %}
+            <table>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Review</th>
+                <th>Stars</th>
+                <th>Recommended</th>
+                <th>Readability</th>
+                <th></th>
+              </tr>
+              {% for review in reviews %}
+                <tr>
+                  <td>{{ review.book.title }}</td>
+                  <td>{{ review.book.author }}</td>
+                  <td>{{ review.description }}</td>
+                  <td>{{ review.stars }}</td>
+                  <td>{{ review.recommendation }}</td>
+                  <td>{{ review.readability }}</td>
+                  <td>
+                    <a href="/books/book{{ review.book.id }}/" class = "btn mb-2 btn-outline-info">View all Reviews For this Book</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+            <br>
+          {% endif %} <!-- if reviews of not personal account -->
+
+        {% else %} <!-- if personal account -->
+
+          {%  if not books %} <!-- end of not personal profile, beginning of if true-->
+          <h3>Your Book List is Empty Add to it Here:</h3>
+          <a href="/add_book/" class="btn mb-2 btn-outline-info">Add Book</a>
+          {% else %} <!-- end of if no books of personal account -->
+            <h3>Your Book List:</h3>
+            <table>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Genre</th>
+                <th>Length</th>
+                <th>Completed</th>
+                <th>Action</th>
+              </tr>
+              {% for book in books %}
+                <tr>
+                  <td>{{ book.title }}</td>
+                  <td>{{ book.author }}</td>
+                  <td>{{ book.genre }}</td>
+                  <td>{{ book.length }}</td>
+                  <td><a href="?toggle_completed={{book.id}}">
+                    {% if book.completed %}Yes{% else %}No{% endif %}
+                  </a></td>
+                  <td>
+                    <a href="/books/book{{ book.id }}/" class = "btn mb-2 btn-outline-info">View all Reviews For this Book</a>
+                    <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.id}})">Delete Book From Reading List</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+            {% endif %} <!-- end of if books of personal profile -->
+          {% if not reviews %}
+            <h3>You Have No Reviews Add One Here:</h3>
+            <a href="/add_review/" class="btn mb-2 btn-outline-info">Add Review</a>
+          {% else %} <!-- end of if no reviews of personal profile -->
+          <br>
+          <h3>Your Reviews:</h3>
+            {% if reviews %}
+              <table>
+                <tr>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Review</th>
+                  <th>Stars</th>
+                  <th>Recommended</th>
+                  <th>Readability</th>
+                  <th>Action</th>
+                </tr>
+                {% for review in reviews %}
+                  <tr>
+                    <td>{{ review.book.title }}</td>
+                    <td>{{ review.book.author }}</td>
+                    <td>{{ review.description }}</td>
+                    <td>{{ review.stars }}</td>
+                    <td>{{ review.recommendation }}</td>
+                    <td>{{ review.readability }}</td>
+                    <td>
+                      <a href="/books/book{{ review.book.id }}/" class = "btn mb-2 btn-outline-info">View all Reviews For this Book</a>
+                      <a href="#" class = "btn mb-2 btn-outline-info" onclick="confirmDeleteModal({{book.review.id}})">Delete Review</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %} <!-- end of if reviews of personal profile -->
+          {% endif %}
+          {% endif %}
+
+
+        {% elif not is_an_account %}  <!-- end of if account, beginning of not account  -->
+          <a href="{% url '' %}" class="btn mb-2 btn-outline-info">This user does not exist. Return to the home page.</a>
+        {% endif %}  <!-- end of if not account -->
+
+
+        {% endif %}  <!-- end of if not user  -->
+      </div>
+    </div>
     </div>
 
   </body>

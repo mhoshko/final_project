@@ -5,10 +5,10 @@ import re
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
-from books.forms import LoginForm, JoinForm, BookForm, ReviewForm, HideCompletedBooksForm, ProfileForm, AddBookForm, HideOtherReviewsForm, HideOthers
+from books.forms import LoginForm, JoinForm, BookForm, ReviewForm, HideCompletedBooksForm, ProfileForm, AddBookForm, HideOtherReviewsForm, HideOthers, SearchUsersForm
 from rest_framework import permissions
 from books.models import Book, Review, UserProfile, BookGenre
-from books.serializers import BookSerializer, BookGenreSerializer, UserSerializer, ReviewSerializer
+from books.serializers import BookSerializer, BookGenreSerializer, UserSerializer, ReviewSerializer, ProfileSerializer
 
 
 def checkAuth(request):
@@ -57,7 +57,7 @@ def home(request):
         "is_hidden": is_hidden,
         "hidden_checked": hidden_checked,
         "not_recommended": not_recommended,
-        "user": request.user,
+        "profile": profile,
         "genres": genres,
         "is_user": checkAuth(request),
     }
@@ -101,6 +101,7 @@ def reviews(request):
     my_books = Book.objects.all()
     context = {
         "is_user": checkAuth(request),
+        "user": request.user,
         "reviews": my_reviews,
         'is_hidden': is_hidden,
         "profile": profile,
@@ -111,7 +112,6 @@ def reviews(request):
 
 @login_required(login_url='/login/')
 def add_review(request):
-
     profile = UserProfile.objects.get(user=request.user)
     my_books = Book.objects.exclude(UserProfile=profile)
     if request.method == 'POST':
@@ -139,14 +139,18 @@ def add_review(request):
     context = {
             'books': my_books,
             "form": form_instance,
+            "profile": profile,
+            "user": request.user,
             "form1": form_1,
             "is_user": checkAuth(request),
     }
     return render(request, 'add_review.html', context=context)
 
 
+
 @login_required(login_url='/login/')
 def edit_review(request, id):
+    profile = UserProfile.objects.get(user=request.user)
     review = Review.objects.get(id=id)
     if(request.method=='POST'):
         review_form = ReviewForm(request.POST, instance=review)
@@ -157,6 +161,8 @@ def edit_review(request, id):
         review_form = ReviewForm(instance=review)
     context = {
         "form": review_form,
+        "user": request.user,
+        "profile": profile,
         "is_user": checkAuth(request),
     }
     return render(request, 'edit_review.html', context=context)
@@ -207,6 +213,7 @@ def books(request):
             my_books = None
     context = {
         'books': my_books,
+        "profile": profile,
         'is_hidden': is_hidden,
         "is_user": checkAuth(request),
     }
@@ -215,7 +222,6 @@ def books(request):
 
 @login_required(login_url='/login/')
 def add_book(request):
-
     profile = UserProfile.objects.get(user=request.user)
     my_books = Book.objects.exclude(UserProfile=profile)
     if request.method == 'POST':
@@ -236,15 +242,69 @@ def add_book(request):
     context = {
             'books': my_books,
             "form": form_instance,
+            "user": request.user,
+            "profile": profile,
             "is_user": checkAuth(request),
     }
     return render(request, 'add_book.html', context=context)
 
 
+@login_required(login_url='/login/')
+def single_book(request, id):
+    book_title = Book.objects.filter(id=id).values_list('title')
+    a = Book.objects.all().values_list('title', flat=True)
+    print("this is the list of all titles existing:")
+    print(a)
+    print("this should be my book title specifically:")
+    for i in book_title:
+        print(book_title)
+
+    books = Book.objects.all().filter(title__in=book_title)
+    print("this should be all objects with my title:")
+    for book in books:
+        print(book.id)
+
+    reviews = Review.objects.all().filter(book__in=books)
+    book_title = str(list(book_title))[3:-4]
+    profile = UserProfile.objects.get(user=request.user)
+
+    context = {
+        "reviews": reviews,
+        "book_title": book_title,
+        "is_user": checkAuth(request),
+        "user": request.user,
+        "profile": profile,
+    }
+    return render(request, 'single_book.html', context=context)
+
+
+@login_required(login_url='/login/')
+def search_users(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if request.method == "POST":
+        form_instance = SearchUsersForm(request.POST)
+        if(form_instance.is_valid()):
+            um = form_instance.cleaned_data["username"]
+            #um = form_instance.username
+            context = {
+                "username": um,
+            }
+
+            return redirect('profile', username=um)
+    else:
+        form_instance = SearchUsersForm()
+    context = {
+        "form": form_instance,
+        "profile": profile,
+        "is_user": checkAuth(request),
+    }
+    return render(request, 'search_users.html', context=context)
+
 
 @login_required(login_url='/login/')
 def createProfile(request):
     instance = get_object_or_404(UserProfile, user=request.user)
+    profile = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         form_instance = ProfileForm(request.POST, request.FILES, instance=instance)
         if(form_instance.is_valid()):
@@ -257,7 +317,9 @@ def createProfile(request):
         form_instance = ProfileForm()
     context = {
         "form": form_instance,
+        "profile": profile,
         "is_user": checkAuth(request),
+        "user": request.user,
     }
     return render(request, 'createProfile.html', context=context)
 
@@ -277,7 +339,6 @@ def profile(request, username=None):
     genres = list(Book.objects.filter(UserProfile=person).values_list('genre', flat=True))
 
     val = request.GET.get('toggle_completed', 0)
-    print(val)
     if val != 0:
         book = Book.objects.get(id=val)
         book.completed = not book.completed
@@ -299,6 +360,7 @@ def profile(request, username=None):
         context = {
             "is_user": checkAuth(request),
             "user": request.user,
+            "profile": profile,
             "username": username,
             "pic": pic,
             "books_completed": books_completed,
@@ -337,7 +399,7 @@ def join(request):
             return render(request, 'join.html', {'join_form': join_form})
     else:
         join_form = JoinForm()
-        page_data = { "join_form": join_form }
+        page_data = { "join_form": join_form,}
         return render(request, 'join.html', page_data)
 
 
@@ -414,4 +476,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     """
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Users to be viewed or edited.
+    """
+    queryset = UserProfile.objects.all()
+    serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
