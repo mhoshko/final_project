@@ -20,6 +20,8 @@ def checkAuth(request):
 # Create your views here.
 @login_required(login_url='/login/')
 def home(request):
+    num_pages = 0
+    num_pages_overall = 0
     profile = UserProfile.objects.get(user=request.user)
 
     if request.method == "POST":
@@ -39,26 +41,33 @@ def home(request):
         books_pending = Book.objects.filter(UserProfile=profile, completed=False).count()
         recommended = Review.objects.filter(UserProfile=profile, recommendation=True).count()
         not_recommended = Review.objects.filter(UserProfile=profile, recommendation=False).count()
-        genres = list(Book.objects.filter(UserProfile=profile).values_list('genre', flat=True))
+        stars = list(Review.objects.filter(UserProfile=profile).values_list('stars', flat=True))
 
     else:
         books_completed = Book.objects.filter(completed=True).count()
         books_pending = Book.objects.filter(completed=False).count()
         recommended = Review.objects.filter(recommendation=True).count()
         not_recommended = Review.objects.filter(recommendation=False).count()
-        genres = list(Book.objects.values_list('genre', flat=True))
+        stars = list(Review.objects.values_list('stars', flat=True))
 
+    pages_read = list(Book.objects.select_related().filter(UserProfile=profile).values_list('length', flat=True))
+    for page in pages_read:
+        num_pages += page
+    pages_read_overall = list(Book.objects.select_related().values_list('length', flat=True))
+    for page in pages_read_overall:
+        num_pages_overall += page
 
-    print(genres)
     context = {
         "books_completed": books_completed,
         "books_pending": books_pending,
+        "stars": stars,
         "recommended": recommended,
         "is_hidden": is_hidden,
+        "num_pages": num_pages,
+        "num_pages_overall": num_pages_overall,
         "hidden_checked": hidden_checked,
         "not_recommended": not_recommended,
         "profile": profile,
-        "genres": genres,
         "is_user": checkAuth(request),
     }
     return render(request, 'index.html', context=context)
@@ -181,7 +190,6 @@ def books(request):
         BookGenre.objects.create(genre="Inspirational, Self-Help, and Religious")
         BookGenre.objects.create(genre="Biography, Autobiography, and Memoir")
     val = request.GET.get('toggle_completed', 0)
-    print(val)
     if val != 0:
         book = Book.objects.get(id=val)
         book.completed = not book.completed
@@ -253,16 +261,7 @@ def add_book(request):
 def single_book(request, id):
     book_title = Book.objects.filter(id=id).values_list('title')
     a = Book.objects.all().values_list('title', flat=True)
-    print("this is the list of all titles existing:")
-    print(a)
-    print("this should be my book title specifically:")
-    for i in book_title:
-        print(book_title)
-
     books = Book.objects.all().filter(title__in=book_title)
-    print("this should be all objects with my title:")
-    for book in books:
-        print(book.id)
 
     reviews = Review.objects.all().filter(book__in=books)
     book_title = str(list(book_title))[3:-4]
@@ -326,6 +325,8 @@ def createProfile(request):
 
 @login_required(login_url='/login/')
 def profile(request, username=None):
+    num_pages = 0
+    num_pages_overall = 0
     use_info = User.objects.get(username=username)
     person = UserProfile.objects.get(user=use_info)
     pic = person.picture.url
@@ -337,6 +338,8 @@ def profile(request, username=None):
     recommended = Review.objects.filter(UserProfile=person, recommendation=True).count()
     not_recommended = Review.objects.filter(UserProfile=person, recommendation=False).count()
     genres = list(Book.objects.filter(UserProfile=person).values_list('genre', flat=True))
+    stars = list(Review.objects.filter(UserProfile=person).values_list('stars', flat=True))
+
 
     val = request.GET.get('toggle_completed', 0)
     if val != 0:
@@ -350,24 +353,32 @@ def profile(request, username=None):
             is_personal_profile = True
             books = Book.objects.filter(UserProfile=profile)
             reviews = Review.objects.filter(UserProfile=profile)
+
         else:
             is_personal_profile = False
             books = Book.objects.filter(UserProfile=person)
             reviews = Review.objects.filter(UserProfile=person)
         is_an_account = True
-
+        pages_read = list(Book.objects.select_related().filter(UserProfile=person).values_list('length', flat=True))
+        for page in pages_read:
+            num_pages += page
+        pages_read_overall = list(Book.objects.select_related().values_list('length', flat=True))
+        for page in pages_read_overall:
+            num_pages_overall += page
 
         context = {
             "is_user": checkAuth(request),
             "user": request.user,
             "profile": profile,
             "username": username,
+            "stars": stars,
+            "num_pages": num_pages,
+            "num_pages_overall": num_pages_overall,
             "pic": pic,
             "books_completed": books_completed,
             "books_pending": books_pending,
             "recommended": recommended,
             "not_recommended": not_recommended,
-            #"UserProfile": profile,
             "books": books,
             "reviews": reviews,
             "is_an_account": is_an_account,

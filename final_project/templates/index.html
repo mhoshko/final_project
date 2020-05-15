@@ -37,7 +37,7 @@
         <div class="container-fluid">
           <div class="jumbotron">
             <div align="center">
-              <h2>Your Book List</h2>
+              <h2>Book List Progression</h2>
               {% if not books_completed and not books_pending %}
               <h4>Your Book List is Empty</h4>
               {% else %}
@@ -48,7 +48,7 @@
 
               <script>
               new Chartist.Pie('#chart1',
-              { labels: ['Completed', 'Pending'], series: [{{books_completed}}, {{books_pending}}] },
+              { labels: ['Completed', 'To Read'], series: [{{books_completed}}, {{books_pending}}] },
               { labelInterpolationFnc: function(value) { return value[0] } },
               [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
               labelInterpolationFnc: function(value) { return value;}}]]);
@@ -69,6 +69,7 @@
           <div class="jumbotron">
             <div align="center">
               <h2>Reviews</h2>
+              <h6>Star Rating for Each Review</h6>
               {% if not recommended and not not_recommended %}
               <h4>Your Review List is Empty</h4>
               {% else %}
@@ -77,12 +78,12 @@
                   <input type="submit" class = "btn mb-2 btn-outline-info" value="Reviews"/>
                 </form>
                 <script>
-                new Chartist.Pie('#chart2',
-                { labels: ['Recommended', 'Not Recommended'], series: [{{recommended}}, {{not_recommended}}] },
-                { labelInterpolationFnc: function(value) { return value[0] } },
-                [['screen', { chartPadding: 20, labelOffset: 60, labelDirection: 'explode',
-                labelInterpolationFnc: function(value) { return value;}}]]);
-                </script>
+                  new Chartist.Bar('#chart2',
+                  {  series:[{{stars}}]},
+                  { seriesBarDistance: 10},
+                  [['screen', { seriesBarDistance: 5,
+                  axisX: { labelInterpolationFnc: function(value){ return value[0];}}}]]);
+                  </script>
 
                 {% endif %}
                 {% if not recommended and not not_recommended %}
@@ -99,19 +100,14 @@
         <div class="container-fluid">
           <div class="jumbotron">
             <div align="center">
-              <h2>Genres</h2>
-              <script>
-              new Chartist.Bar('#chart3',
-              {  series:[{{genres}}]},
-              { seriesBarDistance: 10},
-              [['screen', { seriesBarDistance: 5,
-              axisX: { labelInterpolationFnc: function(value){ return value[0];}}}]]);
-
-              </script>
-                <!-- <h4>Number of Journals: {{journal_count}}</h4> -->
-                <!-- <h5>Days since last Journal entry: {{days_passed}}</h5> -->
+              <h2>Pages Read</h2>
+              <br>
+                <h5>Number of Pages You've Read: {{num_pages}}</h5>
+                <br>
+                <h5>Number of Pages Read by All Users: {{num_pages_overall}}</h5>
+                <br>
                 <form action="\books\">
-                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Books"/>
+                  <input type="submit" class = "btn mb-2 btn-outline-info" value="Book List"/>
                 </form>
             </div>
           </div>
